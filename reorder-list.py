@@ -1,3 +1,5 @@
+from typing import Optional
+
 
 class ListNode:
     def __init__(self, val=0, next=None):
@@ -24,60 +26,54 @@ def toListNode(input_list: list):
 
 class Solution:
     def reorderList(self, head: Optional[ListNode]) -> None:
-        """
-        Do not return anything, modify head in-place instead.
-        """
         if head is None:
-            return
-
-        if head.next is None:
-            return
-
+            return None
         n = 0
         current = head
         while current is not None:
             current = current.next
-            n += 1
+            n+=1
 
-        half = n // 2
-        head2 = head
-        prev = None
+        half = n//2
+
+        current = head
         for i in range(half):
-            prev = head2
-            head2 = head2.next
-        prev.next = None
+            current = current.next
+        
+        head2 = current.next
+        current.next = None
+
         head2 = reverseList(head2)
         head = fuseLists(head, head2)
 
 
+
 def reverseList(head: ListNode):
-    previousNode = None
-    currentNode = head
-    nextNode = head.next
-    while currentNode is not None:
-        nextNode = currentNode.next
-        currentNode.next = previousNode
-        previousNode = currentNode
-        currentNode = nextNode
-    return previousNode
+    prev = None
+    current = head
+    while current is not None:
+        nextNode = current.next
+        current.next = prev
+        prev = current
+        current = nextNode
+    return prev
 
 
-def fuseLists(list1: Optional[ListNode], list2: Optional[ListNode]):
-    head = list1
-    needle = list1
-    hand = list2
-    if list1 is None:
-        return list2
-    if list2 is None:
-        return list1
-    while True:
-        if hand is None:
-            break
+def fuseLists(head1: ListNode, head2: ListNode):
+    if head1 is None:
+        return head2
+    if head2 is None:
+        return head1
+
+    needle = head1
+    hand = head2
+    while hand is not None:
         next_hand = needle.next
         needle.next = hand
         needle = hand
         hand = next_hand
-    return head
+
+    return head1
 
 
 def test_reverse():
@@ -88,13 +84,7 @@ def test_reverse():
 
 
 def test_fuse():
-    l1 = toListNode(
-        [
-            1,
-            2,
-            3,
-        ]
-    )
+    l1 = toListNode([1, 2, 3])
     l2 = toListNode([5, 6, 7])
     fused = fuseLists(l1, l2)
     print(fused.tolist())
@@ -107,6 +97,6 @@ def test_case1():
 
 
 if __name__ == "__main__":
-    # test_fuse()
-    # test_reverse()
+    test_fuse()
+    test_reverse()
     test_case1()
