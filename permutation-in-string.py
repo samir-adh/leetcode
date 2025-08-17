@@ -3,55 +3,56 @@ DEBUG = True
 
 class Solution:
     def checkInclusion(self, s1: str, s2: str) -> bool:
-        def cindex(c: str):
+        def charindex(c: str):
             base = ord("a")
             return ord(c) - base
 
-        if len(s1) == 0:
-            return True
-        if len(s2) < len(s1):
-            return False
-
-        s1table = [0] * 26
-        start = 0
-        end = len(s1)
-
+        # initialisation
+        keytable = [0] * 26
         for c in s1:
-            s1table[cindex(c)] += 1
+            index = charindex(c)
+            keytable[index] += 1
 
+        left = 0
+        right = len(s1)
         wintable = [0] * 26
-        for c in s2[:end]:
-            wintable[cindex(c)] += 1
+        for c in s2[left:right]:
+            index = charindex(c)
+            wintable[index] += 1
 
-        matches = 0
-        for i in range(26):
-            if s1table[i] == wintable[i]:
-                matches += 1
-
+        matches = sum([keytable[i] == wintable[i] for i in range(26)])
         if matches == 26:
             return True
-
-        while end < len(s2):
-            start_index = cindex(s2[start])
-            # if there was the same number of this particular char
-            wintable[start_index] -= 1
-            if wintable[start_index] + 1 == s1table[start_index]:
+        while right < len(s2):
+            # print(f"key: {s1} window:{s2[left:right]} matches {matches}")
+            cl = s2[left]
+            cl_index = charindex(cl)
+            # we remove cl from the table
+            wintable[cl_index] -= 1
+            # if cl was present as much in the key as in the window
+            if keytable[cl_index] == wintable[cl_index] +1:
                 matches -= 1
-            if wintable[start_index] == s1table[start_index]:
+            # if now cl is present as much in the key and the window we can increase the number of matches
+            if keytable[cl_index] == wintable[cl_index]:
                 matches += 1
-
-            start += 1
-
-            end += 1
-            end_index = cindex(s2[end - 1])
-            wintable[end_index] += 1
-            if wintable[end_index] == s1table[end_index]:
-                matches += 1
-            if wintable[end_index] - 1 == s1table[end_index]:
-                matches -= 1
-
+            # we increase left
+            left +=1
+            
+            rl = s2[right]
+            rl_index = charindex(rl)
+            # if there is currently the right amount of rl we'll lose a match
+            if keytable[rl_index] == wintable[rl_index]:
+                matches-=1
+            wintable[rl_index] += 1
+            # if now we have the right amount we can increase the number of matches
+            if keytable[rl_index] == wintable[rl_index]:
+                matches+=1
+            # we increase right
+            right += 1
             if matches == 26:
                 return True
+            
+
         return False
 
 
