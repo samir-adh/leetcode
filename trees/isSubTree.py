@@ -1,5 +1,5 @@
 # Definition for a binary tree node.
-from typing import Deque, Optional
+from typing import Optional
 
 
 class TreeNode:
@@ -7,36 +7,27 @@ class TreeNode:
         self.val = val
         self.left = left
         self.right = right
-
-
 class Solution:
     def isSubtree(self, root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
-        def isSameTree(p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
-            stack = Deque([(p, q)])
-            while len(stack) > 0:
-                a, b = stack.pop()
-                if a is None and b is None:
-                    continue
-                if a is None or b is None:
-                    return False
-                if a.val == b.val:
-                    stack.append((a.left, b.left))
-                    stack.append((a.right, b.right))
-                else:
-                    return False
-            return True
-
-        stack = Deque([root])
         if subRoot is None:
             return True
-        while len(stack) > 0:
-            tree = stack.pop()
-            if tree is None :
-                continue
-            if isSameTree(tree, subRoot):
+        def sameTree(p: Optional[TreeNode], q: Optional[TreeNode]):
+            if p is None and q is None:
+                return True
+            if p is None or q is None:
+                return False
+            if p.val != q.val:
+                return False
+            else:
+                return sameTree(p.left,q.left) and sameTree(p.right, q.right)
+        def aux(root: Optional[TreeNode], sub: TreeNode):
+            if root is None:
+                return False
+            if sameTree(root, sub):
                 return True
             else:
-                stack.append(tree.left)
-                stack.append(tree.right)
-            
-        return False
+                return aux(root.left,sub) or aux(root.right,sub)
+        return aux(root, subRoot) 
+
+
+        
