@@ -3,17 +3,10 @@ from typing import List
 
 class Solution:
     def twoSum(self, nums: List[int], target: int) -> List[int]:
-        numsIdx = [x for x in enumerate(nums)]
-        numsIdx = sorted(numsIdx, key=lambda x: x[1])
-        left = 0
-        right = len(numsIdx)-1
-        while left < right:
-            val = numsIdx[left][1] + numsIdx[right][1]
-            if val == target:
-                return [numsIdx[left][0], numsIdx[right][0]]
-            elif val > target:
-                right -= 1
+        table = {}
+        for i, n in enumerate(nums):
+            diff = target - n
+            if diff in table:
+                return [table[diff], i]
             else:
-                left += 1
-
-        return []
+                table[n] = i
