@@ -10,3 +10,5 @@ class Solution:
                 return [table[diff], i]
             else:
                 table[n] = i
+
+        return []
