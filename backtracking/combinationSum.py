@@ -3,21 +3,22 @@ from typing import List
 
 class Solution:
     def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
-        output = []
+        acc = []
         candidates = sorted(candidates)
 
         def aux(index: int, subset: List[int], total):
             if total == target:
-                output.append(subset)
+                acc.append(subset)
                 return
-            for j in range(index, len(candidates)):
-                a = candidates[j]
-                if total + a > target:
-                    return  # because the array is sorted in increasing order
-                aux(j, subset + [a], total + a)
+            # for i in range(index, len(candidates)):
+            #     aux(index + 1, subset + [candidates[index]], total + candidates[index])
+            if index >= len(candidates) or total > target:
+                return
+            aux(index, subset + [candidates[index]], total + candidates[index])
+            aux(index + 1, subset, total)
 
         aux(0, [], 0)
-        return output
+        return acc
 
 
 def test_case1():
@@ -25,14 +26,7 @@ def test_case1():
     target = 7
     expected = [[2, 2, 3], [7]]
     output = Solution().combinationSum(candidates, target)
-    output = [sorted(o) for o in output]
-    for o in output:
-        if o not in expected:
-            print(f"wrong subset : '{o}' not found in '{expected}'")
-    for e in expected:
-        if e not in output:
-            print(f"missing subset : '{e}' not found in '{output}'")
+    print(f"expected : {expected}\ngot : {output}")
 
 
-if __name__ == "__main__":
-    test_case1()
+test_case1()
