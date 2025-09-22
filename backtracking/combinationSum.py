@@ -10,13 +10,10 @@ class Solution:
             if total == target:
                 acc.append(subset)
                 return
-            # for i in range(index, len(candidates)):
-            #     aux(index + 1, subset + [candidates[index]], total + candidates[index])
-            if index >= len(candidates) or total > target:
-                return
-            aux(index, subset + [candidates[index]], total + candidates[index])
-            aux(index + 1, subset, total)
-
+            for i in range(index, len(candidates)):
+                if total + candidates[index] > target:
+                    break
+                aux(i, subset + [candidates[i]], total + candidates[i])
         aux(0, [], 0)
         return acc
 

@@ -6,21 +6,17 @@ class Solution:
         acc = []
         candidates = sorted(candidates)
 
-        def aux(index: int, subset: List[int], total):
+        def aux(index: int, subset: List[int],total: int):
             if total == target:
                 acc.append(subset)
                 return
-            if index >= len(candidates) or total > target:
-                return
-            else:
-                aux(index + 1, subset + [candidates[index]], total + candidates[index])
-                while index + 1 < len(candidates) and candidates[index + 1] == candidates[index]:
-                    index += 1
-                aux(index + 1, subset, total)
+            for i in range(index, len(candidates)):
+                if i > index and candidates[i-1] == candidates[i]:
+                    continue
+                aux(i+1, subset + [candidates[i]], total + candidates[i])
 
-        aux(0, [], 0)
+        aux(0,[], 0)
         return acc
-
 
 def test_case1():
     candidates = [10, 1, 2, 7, 6, 1, 5]
