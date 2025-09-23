@@ -1,40 +1,21 @@
 from typing import List
-
-
 class Solution:
     def permute(self, nums: List[int]) -> List[List[int]]:
         acc = []
+        n = len(nums)
 
-        def aux(items: List[int], subset: List[int]):
-            if len(subset) == len(nums):
+        def aux(available : List[int], subset: List[int]):
+            if len(subset) == n:
                 acc.append(subset)
                 return
-            for i in range(len(items)):
-                newItems = items.copy()
-                newSubset = subset + [newItems.pop(i)]
-                aux(newItems, newSubset)
-
+            for i in range(len(available)):
+                item = available.pop(0)
+                aux(available, subset + [item])
+                available.append(item)
+        
         aux(nums, [])
         return acc
-
-### With set
-
-# class Solution:
-#     def permute(self, nums: List[int]) -> List[List[int]]:
-#         acc = []
-
-#         def aux(items: set[int], subset: List[int]):
-#             if len(subset) == len(nums):
-#                 acc.append(subset)
-#                 return
-#             for i in items:
-#                 newItems = items.copy()
-#                 newItems.remove(i)
-#                 newSubset = subset + [i]
-#                 aux(newItems, newSubset)
-
-#         aux(set(nums), [])
-#         return acc
+                
 
 def test_case1():
     nums = [1, 2, 3]
