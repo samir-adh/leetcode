@@ -15,18 +15,15 @@ class Solution:
                 right -= 1
             return True
 
-        def aux(j: int, i: int, parts: list[str]):
+        def aux(i: int, parts: list[str]):
             if i >= len(s):
-                if i == j:
-                    acc.append(parts)
-                    return
-            else :
-                sub = s[j : i + 1]
+                acc.append(parts)
+                return
+            for j in range(i+1, len(s)+1):
+                sub = s[i : j]
                 if isPalindrome(sub):
-                    aux(i + 1, i + 1, parts + [sub])
-                aux(j, i + 1, parts)
-
-        aux(0, 0, [])
+                    aux(j, parts + [sub])
+        aux(0, [])
         return acc
 
 
