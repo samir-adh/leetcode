@@ -1,20 +1,18 @@
 from typing import List
 
-
 class Solution:
     def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
         acc = []
         candidates = sorted(candidates)
-
-        def aux(index: int, subset: List[int], total):
+        def aux(index: int, subset: List[int], total : int):
             if total == target:
                 acc.append(subset)
                 return
-            for i in range(index, len(candidates)):
-                if total + candidates[index] > target:
+            for j in range(index, len(candidates)):
+                if total + candidates[index] > target :
                     break
-                aux(i, subset + [candidates[i]], total + candidates[i])
-        aux(0, [], 0)
+                aux(j, subset + [candidates[j]], total + candidates[j])
+        aux(0,[],0)
         return acc
 
 
