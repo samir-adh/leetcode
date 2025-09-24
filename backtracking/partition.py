@@ -3,26 +3,26 @@ from typing import List
 
 class Solution:
     def partition(self, s: str) -> List[List[str]]:
-        acc = []
-
-        def isPalindrome(s: str):
-            left = 0
-            right = len(s) - 1
-            while left < right:
-                if s[left] != s[right]:
+        def isPalindrome(word: str):
+            l = 0
+            r = len(word) - 1
+            while l < r:
+                if word[l] != word[r]:
                     return False
-                left += 1
-                right -= 1
+                l += 1
+                r -= 1
             return True
+        acc = []
+        n = len(s)
 
-        def aux(i: int, parts: list[str]):
-            if i >= len(s):
-                acc.append(parts)
+        def aux(i: int, part: list[str]):
+            if i >= n:
+                acc.append(part)
                 return
-            for j in range(i+1, len(s)+1):
-                sub = s[i : j]
+            for j in range(i, n):
+                sub = s[i:j+1]
                 if isPalindrome(sub):
-                    aux(j, parts + [sub])
+                    aux(j+1, part + [sub])
         aux(0, [])
         return acc
 
