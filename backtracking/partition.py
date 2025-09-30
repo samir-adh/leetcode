@@ -1,32 +1,29 @@
-from typing import List
-
+from typing  import List 
 
 class Solution:
     def partition(self, s: str) -> List[List[str]]:
-        def isPalindrome(word: str):
+        res = []
+        def isPalindrome(a:str):
             l = 0
-            r = len(word) - 1
-            while l < r:
-                if word[l] != word[r]:
+            r = len(a)-1
+            while l<r:
+                if a[l] != a[r]:
                     return False
-                l += 1
-                r -= 1
+                l+=1
+                r-=1
             return True
-        acc = []
-        n = len(s)
-
-        def aux(i: int, part: list[str]):
-            if i >= n:
-                acc.append(part)
+        def aux(index: int, part: List[str]):
+            if index >= len(s):
+                res.append(part)
                 return
-            for j in range(i, n):
-                sub = s[i:j+1]
+            for j in range(index, len(s)):
+                sub = s[index: j+1]
                 if isPalindrome(sub):
                     aux(j+1, part + [sub])
         aux(0, [])
-        return acc
-
+        return res
+    
 
 s = "aab"
-output = Solution().partition(s)
-print(output)
+out= Solution().partition(s)
+print(out)
