@@ -7,24 +7,25 @@ class Solution:
         for course, pre in prerequisites:
             table[pre].append(course)
 
-        visited: set[int] = set()
+        visited = set()
 
-        def dfs(current: int):
-            if current in visited:
+        def dfs(k: int):
+            if k in visited:
                 return False
-            if table[current] == []:
+            if table[k] == []:
                 return True
-            visited.add(current)
-            for child in table[current]:
-                if not dfs(child):
-                    return False
-            table[current] = []
-            visited.remove(current)
+            else:
+                visited.add(k)
+                for c in table[k]:
+                    if not dfs(c):
+                        return False
+                table[k] = []
+                visited.remove(k)
+                return True
 
-        for k in table.keys():
-            if k not in visited:
-                if not dfs(k):
-                    return False
+        for k in range(numClasses):
+            if k not in visited and not dfs(k):
+                return False
         return True
 
 
