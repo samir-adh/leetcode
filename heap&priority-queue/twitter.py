@@ -1,50 +1,49 @@
-from typing import Deque, List
+from typing import DefaultDict, List
+from _heapq import heapify, heappop, heappush
 
 
 class Twitter:
     def __init__(self):
-        self.tweets: dict[int, Deque[tuple[int, int]]] = {}
-        self.followees: dict[int, set[int]] = {}
-        self.time = 0
+        self.tweets = DefaultDict(list)
+        self.followees = DefaultDict(set)
+        self.count = 0
 
     def postTweet(self, userId: int, tweetId: int) -> None:
-        tweets = self.tweets.get(userId, Deque([]))
-        tweets.appendleft((self.time, tweetId))
-        if len(tweets) > 10:
-            tweets.pop()
-        self.tweets[userId] = tweets
-        self.time += 1
+        self.tweets[userId].append((self.count, tweetId))
+        self.count -= 1
 
     def getNewsFeed(self, userId: int) -> List[int]:
-        toSort = [
-            self.tweets.get(followee, Deque([])).copy()
-            for followee in self.followees.get(userId, set([])).union([userId])
-        ]
-        # print(toSort)
-        tweets_count = sum([len(u) for u in toSort])
+        minHeap = []
+        for followeeId in self.followees[userId].union(set([userId])):
+            if not self.tweets[followeeId]:
+                continue
+            count, tweetId = self.tweets[followeeId][-1]
+            index = len(self.tweets[followeeId]) - 1
+            minHeap.append((count, tweetId, followeeId, index))
+        heapify(minHeap)
         feed = []
-        while len(feed) < 10 and tweets_count > 0:
-            maxIdx = -1
-            for i in range(len(toSort)):
-                user = toSort[i]
-                if len(user) > 0 and user[0][0] > maxIdx:
-                    maxIdx = i
-            if maxIdx != -1:
-                feed.append(toSort[maxIdx].popleft()[1])
-                tweets_count -= 1
+        while len(feed) < 10 and minHeap:
+            count, tweetId, followeeId, index = heappop(minHeap)
+            feed.append(tweetId)
+            if index - 1 >= 0:
+                count, tweetId = self.tweets[followeeId][index - 1]
+                heappush(minHeap, (count, tweetId, followeeId, index - 1))
         return feed
 
     def follow(self, followerId: int, followeeId: int) -> None:
-        if followerId in self.followees:
-            self.followees[followerId].add(followeeId)
-        else:
-            self.followees[followerId] = set([followeeId])
+        self.followees[followerId].add(followeeId)
 
     def unfollow(self, followerId: int, followeeId: int) -> None:
-        if followerId in self.followees:
+        if followeeId in self.followees[followerId]:
             self.followees[followerId].remove(followeeId)
 
 
+# Your Twitter object will be instantiated and called as such:
+# obj = Twitter()
+# obj.postTweet(userId,tweetId)
+# param_2 = obj.getNewsFeed(userId)
+# obj.follow(followerId,followeeId)
+# obj.unfollow(followerId,followeeId)
 def test_case1():
     args = zip(
         [
@@ -70,4 +69,7 @@ def test_case1():
             out = t.follow(arg[0], arg[1])
         if command == "unfollow":
             out = t.unfollow(arg[0], arg[1])
-        print(f"{t.time} : {out}")
+        print(f"{t.count} : {out}")
+
+
+test_case1()
