@@ -1,50 +1,29 @@
-from typing import List
-
-
-class Node:
-    def __init__(self, val: int) -> None:
-        self.val = val
-        self.children = []
-
-    def append(self, node: "Node"):
-        self.children.append(node)
+from typing import DefaultDict, List
 
 
 class Solution:
-    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
-        table: dict[int, Node] = {}
+    def canFinish(self, numClasses: int, prerequisites: List[List[int]]):
+        table = DefaultDict(list)
         for course, pre in prerequisites:
-            if course not in table:
-                node = Node(course)
-                table[course] = node
-            if pre not in table:
-                table[pre] = Node(pre)
-            table[pre].append(table[course])
+            table[pre].append(course)
 
-        # print([(k, [child.val for child in v.children]) for k, v in table.items()])
+        visited: set[int] = set()
 
-        visited = set([])
+        def dfs(current: int):
+            if current in visited:
+                return False
+            if table[current] == []:
+                return True
+            visited.add(current)
+            for child in table[current]:
+                if not dfs(child):
+                    return False
+            table[current] = []
+            visited.remove(current)
 
-        def dfs(node: Node):
-            stack = [(node, set([node]))]
-            visited.add(node)
-            while stack:
-                current, path = stack.pop()
-                # print(f"{current.val}, count : {len(path)}")
-                # if len(path) > numCourses:
-                #     return False
-                for child in current.children:
-                    if child in path or len(path) > numCourses:
-                        return False
-                    if child in visited:
-                        continue
-                    stack.append((child, path.union([child])))
-                    visited.add(child)
-            return True
-
-        for node in table.values():
-            if node not in visited:
-                if not dfs(node):
+        for k in table.keys():
+            if k not in visited:
+                if not dfs(k):
                     return False
         return True
 

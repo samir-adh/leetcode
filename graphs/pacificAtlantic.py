@@ -5,19 +5,21 @@ class Solution:
     def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:
         n = len(heights)
         m = len(heights[0])
-
-        atl = set()
         pac = set()
+        atl = set()
 
         directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
 
         def dfs(i: int, j: int, path: set[tuple[int, int]]):
-            if (i, j) in path:  # (0 <= i < n and 0<= j < m):
-                return
             path.add((i, j))
             for di, dj in directions:
                 u, v = i + di, j + dj
-                if (0 <= u < n and 0 <= v < m) and heights[i][j] <= heights[u][v]:
+                if (
+                    0 <= u < n
+                    and 0 <= v < m
+                    and (u, v) not in path
+                    and heights[i][j] <= heights[u][v]
+                ):
                     dfs(u, v, path)
 
         for i in range(n):
@@ -26,12 +28,13 @@ class Solution:
         for j in range(m):
             dfs(0, j, pac)
             dfs(n - 1, j, atl)
-        output = []
+
+        res = []
         for i in range(n):
             for j in range(m):
                 if (i, j) in atl and (i, j) in pac:
-                    output.append([i, j])
-        return output
+                    res.append([i, j])
+        return res
 
 
 def case1():
