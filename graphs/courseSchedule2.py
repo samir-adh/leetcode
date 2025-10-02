@@ -1,4 +1,4 @@
-from typing import DefaultDict, List
+from typing import DefaultDict, List, OrderedDict
 
 
 class Solution:
@@ -7,27 +7,26 @@ class Solution:
         for course, pre in prerequisites:
             table[course].append(pre)
 
-        path = set()
-        completed = set()
-        schedule = []
+        visited = OrderedDict()
+        cycle = set()
 
-        def possible(course: int):
-            if course in completed:
+        def dfs(course: int) -> bool:
+            if course in cycle:
+                return False
+            if course in visited:
                 return True
-            path.add(course)
+            cycle.add(course)
             for pre in table[course]:
-                if pre in path or not possible(pre):
+                if not dfs(pre):
                     return False
-            completed.add(course)
-            schedule.append(course)
-            path.remove(course)
-            table[course] = []
+            cycle.remove(course)
+            visited[course] = None
             return True
 
-        for i in range(numCourses):
-            if not possible(i):
+        for course in range(numCourses):
+            if not dfs(course):
                 return []
-        return schedule
+        return list(visited.keys())
 
 
 prerequisites = [[1, 0]]
