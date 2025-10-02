@@ -5,27 +5,33 @@ class Solution:
     def findOrder(self, numCourses: int, prerequisites: List[List[int]]) -> List[int]:
         table = DefaultDict(list[int])
         for course, pre in prerequisites:
-            table[pre].append(course)
+            table[course].append(pre)
 
-        visited = set()
-        cycle = set()
-        path = []
+        path = set()
+        completed = set()
+        schedule = []
 
-        def dfs(k: int) -> bool:
-            if k in cycle:
-                return False
-            if k in visited:
+        def possible(course: int):
+            if course in completed:
                 return True
-            cycle.add(k)
-            for c in table[k]:
-                if not dfs(c):
+            path.add(course)
+            for pre in table[course]:
+                if pre in path or not possible(pre):
                     return False
-            cycle.remove(k)
-            visited.add(k)
-            path.append(k)
+            completed.add(course)
+            schedule.append(course)
+            path.remove(course)
+            table[course] = []
             return True
 
         for i in range(numCourses):
-            if not dfs(i):
+            if not possible(i):
                 return []
-        return path
+        return schedule
+
+
+prerequisites = [[1, 0]]
+numCourses = 2
+expected = [0, 1]
+output = Solution().findOrder(numCourses, prerequisites)
+print(f"expected {expected}, got {output}")
