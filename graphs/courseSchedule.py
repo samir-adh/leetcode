@@ -3,28 +3,26 @@ from typing import DefaultDict, List
 
 class Solution:
     def canFinish(self, numClasses: int, prerequisites: List[List[int]]):
-        table = DefaultDict(list)
-        for course, pre in prerequisites:
-            table[pre].append(course)
+        table = DefaultDict(list[int])
+        for c, p in prerequisites:
+            table[p].append(c)
+        required: set[int] = set()
 
-        visited = set()
-
-        def dfs(k: int):
-            if k in visited:
+        def complete(course: int):
+            if course in required:
                 return False
-            if table[k] == []:
+            if table[course] == []:
                 return True
-            else:
-                visited.add(k)
-                for c in table[k]:
-                    if not dfs(c):
-                        return False
-                table[k] = []
-                visited.remove(k)
-                return True
+            required.add(course)
+            for c in table[course]:
+                if not complete(c):
+                    return False
+            table[course] = []
+            required.remove(course)
+            return True
 
-        for k in range(numClasses):
-            if k not in visited and not dfs(k):
+        for course in range(numClasses):
+            if not complete(course):
                 return False
         return True
 
