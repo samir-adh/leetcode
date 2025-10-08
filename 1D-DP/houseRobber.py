@@ -3,13 +3,15 @@ from typing import List
 
 class Solution:
     def rob(self, nums: List[int]) -> int:
-        rob = [0,0]
-        for n in nums:
-            tmp = max(rob[0] + n, rob[1])
-            rob[0] = rob[1]
-            rob[1] = tmp
-        return rob[1]
-    
+        if len(nums) < 3:
+            return max(nums)
+        res = [0, 0, 0]
+        res[:2] = nums[:2]
+        res[1] = max(res[:2])
+        for i in range(2, len(nums)):
+            res[2] = max(res[1], res[0] + nums[i])
+            res[:2] = res[1:]
+        return res[2]
 
 
 nums = [2, 1, 1, 2]
