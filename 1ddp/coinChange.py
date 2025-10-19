@@ -1,35 +1,33 @@
-from math import inf
 from typing import List
 
 
 class Solution:
     def coinChange(self, coins: List[int], amount: int) -> int:
-        table: dict[float, float] = {
-            **{k: 1 for k in coins},
-            **{0: 0}
-        }
+        inf = 10**5
+        mem = {}
+        mem[0] = 0
+        for coin in coins:
+            mem[coin] = 1
 
-        def aux(target: int) -> float:
+        def aux(target: int) -> int:
             if target < 0:
                 return inf
-            if target in table:
-                return table[target]
-            ncoins = inf
+            if target in mem:
+                return mem[target]
+            mini = inf
             for coin in coins:
-                res = 1 + aux(target - coin)
-                ncoins = min(res,ncoins)
-            table[target] = ncoins
-            return ncoins
+                mini = min(mini, aux(target - coin) + 1)
+            mem[target] = mini
+            return mini
 
-        res = aux(amount)
-        if res == inf:
+        result = aux(amount)
+        if result >= inf:
             return -1
-        else : 
-            return int(res)
-    
+        return result
 
-coins = [2]
-amount = 3
+
+coins = [186, 419, 83, 408]
+amount = 6249
 expected = -1
 output = Solution().coinChange(coins, amount)
 print(f"expected {expected} got {output}")
