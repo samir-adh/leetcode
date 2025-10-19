@@ -8,7 +8,7 @@ class Solution:
                 nonlocal result
                 result += 1
                 left -= 1
-                right += 0
+                right += 1
 
         for i in range(n):
             left = i
