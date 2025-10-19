@@ -1,30 +1,29 @@
 class Solution:
     def longestPalindrome(self, s: str) -> str:
         n = len(s)
-        maxpali = ""
+        longest = ""
+
+        def loop(left: int, right: int):
+            pali = ""
+            while left >= 0 and right < n and s[left] == s[right]:
+                pali = s[left : right + 1]
+                left -= 1
+                right += 1
+            nonlocal longest
+            if len(pali) > len(longest):
+                longest = pali
+
         for i in range(n):
-            # Case odd
+            # odd palindrome
             left = i
             right = i
-            res = s[left]
-            while left >= 0 and right < n and s[left] == s[right]:
-                res = s[left : right + 1]
-                left -= 1
-                right += 1
-            if len(res) > len(maxpali):
-                maxpali = res
-            # Case even
+            loop(left, right)
+
+            # even palindrome
             left = i
             right = i + 1
-            res = ""
-            while left >= 0 and right < n and s[left] == s[right]:
-                res = s[left : right + 1]
-                left -= 1
-                right += 1
-            if len(res) > len(maxpali):
-                maxpali = res
-
-        return maxpali
+            loop(left, right)
+        return longest
 
 
 s = "aacabdkacaa"
