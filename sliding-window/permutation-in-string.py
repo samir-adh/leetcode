@@ -1,57 +1,38 @@
-DEBUG = True
-
-
 class Solution:
     def checkInclusion(self, s1: str, s2: str) -> bool:
-        def charindex(c: str):
-            base = ord("a")
-            return ord(c) - base
+        def idx(c: str):
+            return ord(c) - ord("a")
 
-        # initialisation
-        keytable = [0] * 26
+        table1 = [0] * 26
         for c in s1:
-            index = charindex(c)
-            keytable[index] += 1
-
-        left = 0
-        right = len(s1)
-        wintable = [0] * 26
-        for c in s2[left:right]:
-            index = charindex(c)
-            wintable[index] += 1
-
-        matches = sum([keytable[i] == wintable[i] for i in range(26)])
-        if matches == 26:
-            return True
-        while right < len(s2):
-            # print(f"key: {s1} window:{s2[left:right]} matches {matches}")
-            cl = s2[left]
-            cl_index = charindex(cl)
-            # we remove cl from the table
-            wintable[cl_index] -= 1
-            # if cl was present as much in the key as in the window
-            if keytable[cl_index] == wintable[cl_index] +1:
-                matches -= 1
-            # if now cl is present as much in the key and the window we can increase the number of matches
-            if keytable[cl_index] == wintable[cl_index]:
-                matches += 1
-            # we increase left
-            left +=1
-            
-            rl = s2[right]
-            rl_index = charindex(rl)
-            # if there is currently the right amount of rl we'll lose a match
-            if keytable[rl_index] == wintable[rl_index]:
-                matches-=1
-            wintable[rl_index] += 1
-            # if now we have the right amount we can increase the number of matches
-            if keytable[rl_index] == wintable[rl_index]:
-                matches+=1
-            # we increase right
-            right += 1
-            if matches == 26:
+            table1[idx(c)] += 1
+        table2 = [0] * 26
+        n = len(s1)
+        for c in s2[:n]:
+            table2[idx(c)] += 1
+        errors = 0
+        for i in range(26):
+            if table1[i] != table2[i]:
+                errors += 1
+        for i in range(n, len(s2)):
+            print(f"Errors : {errors}")
+            if errors == 0:
                 return True
-            
+            # remove first char of the substring
+            j = idx(s2[i - n])
+            if table2[j] == table1[j]:
+                errors += 1
+            table2[j] -= 1
+            if table2[j] == table1[j]:
+                errors -= 1
+
+            # add new char to the substring
+            k = idx(s2[i])
+            if table2[k] == table1[k]:
+                errors += 1
+            table2[k] += 1
+            if table2[k] == table1[k]:
+                errors -= 1
 
         return False
 
@@ -81,5 +62,13 @@ def test_3():
     assert result == expected, f"Expected {expected}, got {result}"
 
 
+def test_4():
+    s1 = "adc"
+    s2 = "dcda"
+    expected = True
+    result = Solution().checkInclusion(s1, s2)
+    assert result == expected, f"Expected {expected}, got {result}"
+
+
 if __name__ == "__main__":
-    test_1()
+    test_4()
