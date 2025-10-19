@@ -1,24 +1,24 @@
 class Solution:
     def countSubstrings(self, s: str) -> int:
-        res = 0
+        result = 0
         n = len(s)
+
+        def loop(left: int, right: int):
+            while left >= 0 and right < n and s[left] == s[right]:
+                nonlocal result
+                result += 1
+                left -= 1
+                right += 0
+
         for i in range(n):
-            # Odd case
             left = i
             right = i
-            while 0 <= left and right < n and s[left] == s[right]:
-                res += 1
-                left -= 1
-                right += 1
+            loop(left, right)
 
-            # Even case
             left = i
             right = i + 1
-            while 0 <= left and right < n and s[left] == s[right]:
-                res += 1
-                left -= 1
-                right += 1
-        return res
+            loop(left, right)
+        return result
 
 
 s = "abc"
