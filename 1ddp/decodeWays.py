@@ -1,20 +1,18 @@
 class Solution:
     def numDecodings(self, s: str) -> int:
+        res = [1, 0, 0]
+        if s[0] != "0":
+            res[1] = 1
+            res[2] = 1
         n = len(s)
-        res = [0, 0, 0]
-        res[0] = 1
-        res[1] = 0 if s[0] == "0" else 1
-
-        for i in range(2, n+1):
+        for i in range(1, n):
             res[2] = 0
-            if 0 < int(s[i-1]):
+            if s[i] != "0":
                 res[2] += res[1]
-
-            if 9 < int(s[i-2: i]) < 27:
+            if 9 < int(s[i - 1 : i + 1]) < 27:
                 res[2] += res[0]
             res[:2] = res[1:]
-        
-        return res[1]
+        return res[2]
 
 
 s = "111111111111111111111111111111111111111111111"
