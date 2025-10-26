@@ -3,28 +3,31 @@ from typing import DefaultDict, List
 
 class Solution:
     def canFinish(self, numClasses: int, prerequisites: List[List[int]]):
-        table = DefaultDict(list[int])
-        for c, p in prerequisites:
-            table[p].append(c)
-        required: set[int] = set()
+        graph = {course: [] for course in range(numClasses)}
+        for a, b in prerequisites:
+            graph[b].append(a)
+        indegrees = {}
+        for i in range(numClasses):
+            indegrees[i] = 0
 
-        def complete(course: int):
-            if course in required:
-                return False
-            if table[course] == []:
-                return True
-            required.add(course)
-            for c in table[course]:
-                if not complete(c):
-                    return False
-            table[course] = []
-            required.remove(course)
-            return True
+        for node in range(numClasses):
+            for nei in graph[node]:
+                indegrees[nei] = indegrees.get(nei, 0) + 1
 
-        for course in range(numClasses):
-            if not complete(course):
-                return False
-        return True
+        queue = []
+        for node in graph.keys():
+            if indegrees[node] == 0:
+                queue.append(node)
+        n = 0
+        while queue:
+            current = queue.pop(0)
+            n += 1
+            for nei in graph[current]:
+                indegrees[nei] -= 1
+                if indegrees[nei] == 0:
+                    queue.append(nei)
+
+        return n == numClasses
 
 
 prerequisites = [
