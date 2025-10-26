@@ -24,6 +24,8 @@ class Solution:
                 indegrees[nei] -= 1
                 if indegrees[nei] == 0:
                     queue.append(nei)
+        if len(traversal) != numCourses:
+            traversal = []
         return traversal
 
 

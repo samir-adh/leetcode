@@ -3,22 +3,32 @@ from typing import List
 
 class Solution:
     def canPartition(self, nums: List[int]) -> bool:
-        target = sum(nums)//2
-        rem = sum(nums) % 2
-        if rem != 0:
+        sum_of_all = sum(nums)
+        if sum_of_all % 2 == 1:
             return False
-        n = len(nums)
-        mem = set()
-        for i in range(n):
-            num = nums[n-i-1]
-            nextmem = mem.copy()
-            for subsum in mem:
-                if num + subsum == target:
-                    return True
-                nextmem.add(num+subsum)
-        return False
+        mem = {}
+        target = sum_of_all // 2
 
-nums = [100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,99,97]
+        def can_obtain_target(index: int, target: int):
+            if target < 0:
+                return False
+            if index == 0:
+                return target == 0
+            if target in mem:
+                if mem[target][0] and index > mem[target][1]:
+                    return True
+                if not mem[target][0] and index < mem[target][1]:
+                    return False
+            is_possible = can_obtain_target(index - 1, target) or can_obtain_target(
+                index - 1, target - nums[index]
+            )
+            mem[target] = [is_possible, index]
+            return is_possible
+
+        return can_obtain_target(len(nums) - 1, target)
+
+
+nums = [1, 3, 4, 4]
 output = Solution().canPartition(nums)
 expected = True
 print(f"expected {expected}, got : {output}")
