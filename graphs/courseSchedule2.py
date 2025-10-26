@@ -3,30 +3,28 @@ from typing import DefaultDict, List, OrderedDict
 
 class Solution:
     def findOrder(self, numCourses: int, prerequisites: List[List[int]]) -> List[int]:
-        table = DefaultDict(list[int])
+        graph = [[] for course in range(numCourses)]
         for course, pre in prerequisites:
-            table[course].append(pre)
+            graph[pre].append(course)
 
-        visited = OrderedDict()
-        cycle = set()
-
-        def dfs(course: int) -> bool:
-            if course in cycle:
-                return False
-            if course in visited:
-                return True
-            cycle.add(course)
-            for pre in table[course]:
-                if not dfs(pre):
-                    return False
-            cycle.remove(course)
-            visited[course] = None
-            return True
-
+        indegrees = [0 for course in range(numCourses)]
         for course in range(numCourses):
-            if not dfs(course):
-                return []
-        return list(visited.keys())
+            for next in graph[course]:
+                indegrees[next] += 1
+
+        queue = []
+        for course in range(numCourses):
+            if indegrees[course] == 0:
+                queue.append(course)
+        traversal = []
+        while queue:
+            current = queue.pop(0)
+            traversal.append(current)
+            for nei in graph[current]:
+                indegrees[nei] -= 1
+                if indegrees[nei] == 0:
+                    queue.append(nei)
+        return traversal
 
 
 prerequisites = [[1, 0]]
