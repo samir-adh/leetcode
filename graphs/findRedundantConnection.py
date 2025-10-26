@@ -7,29 +7,24 @@ class Solution:
         cycle = set()
         graph = DefaultDict(list[int])
 
-        def dfs(node: int) -> bool:
-            if node in visited:
-                return True
+        def graph_has_cycle(node, parent):
             if node in cycle:
+                return True
+            if node in visited:
                 return False
             cycle.add(node)
             for nei in graph[node]:
-                # if node == nei:
-                # continue
-                if not dfs(nei):
-                    return False
+                if nei != parent and graph_has_cycle(nei, node):
+                    return True
             cycle.remove(node)
-            visited.add(node)
-            return True
+            return False
 
-        result = []
         for a, b in edges:
-            visited = set()
             graph[a].append(b)
             graph[b].append(a)
-            if not dfs(a):
-                result.append([a, b])
-        return result
+            if graph_has_cycle(a, -1):
+                return [a, b]
+        return []
 
 
 edges = [[1, 2], [2, 3], [3, 4], [1, 4], [1, 5]]
