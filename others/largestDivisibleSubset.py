@@ -3,37 +3,26 @@ from typing import DefaultDict, List
 
 class Solution:
     def largestDivisibleSubset(self, nums: List[int]) -> List[int]:
-        nums = sorted(nums, reverse=True)
-        graph = DefaultDict(list[int])
-        roots = set(nums)
-        for i, node in enumerate(nums):
-            for nei in nums[i + 1 :]:
-                if node % nei == 0:
-                    graph[node].append(nei)
-                    roots.discard(nei)
+        nums = sorted(nums)
         mem = {}
 
-        def dfs(node: int):
-            if node in mem:
-                return mem[node]
-            if len(graph[node]) == 0:
-                return [node]
+        def largest_sequence(index: int, prev: int):
+            if index >= len(nums):
+                return []
+            if (index, prev) in mem:
+                return mem[(index, prev)]
             else:
-                longest = [node]
-                for nei in graph[node]:
-                    traversal = dfs(nei) + [node]
-                    if len(traversal) > len(longest):
-                        longest = traversal
-                mem[node] = longest
-                return longest
+                largest = largest_sequence(index + 1, prev)
+                if nums[index] % prev == 0:
+                    new_sequence = [nums[index]] + largest_sequence(
+                        index + 1, nums[index]
+                    )
+                    if len(new_sequence) > len(largest):
+                        largest = new_sequence
+                mem[(index, prev)] = largest
+                return largest
 
-        longest = []
-        for root in roots:
-            traversal = dfs(root)
-            if len(traversal) > len(longest):
-                longest = traversal
-
-        return longest
+        return largest_sequence(0, 1)
 
 
 nums = [1, 2, 3, 4, 8]
