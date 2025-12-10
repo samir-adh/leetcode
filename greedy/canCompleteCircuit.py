@@ -1,27 +1,25 @@
 from typing import List
 
-
-class Group:
-
-    def __init__(self, value: int, start: int) -> None:
-        self.value = value
-        self.start = start
-
-
 class Solution:
     def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int:
-        n = len(gas)
         if sum(gas) < sum(cost):
             return -1
-        netCost = [g-c for g, c in zip(gas, cost)]
-        total = 0
         start = 0
-        for i,price in enumerate(netCost):
-            total += price
-            if total < 0:
-                total = 0
-                start = i +1
+        end = 1
+        n = len(gas)
+        if n <= 1:
+            return 0
+        tank = gas[start] - cost[start]
+        while start != end:
+            if tank < 0:
+                start = (start - 1) % n
+                tank += gas[start] - cost[start]
+            else:
+                tank += gas[end] - cost[end]
+                end = (end + 1) % n
         return start
+
+
 
 def test_case1():
     gas = [1, 2, 3, 4, 5]
