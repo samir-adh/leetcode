@@ -18,63 +18,33 @@
 from typing import List
 
 
-def valuesToTheLeft(array: List[int], target: int) -> int:
-    left = 0
-    right = len(array)
-    mid = 0
-    prev = 1
-    while prev != mid:
-        prev = mid
-        mid = (left + right) // 2
-        if array[mid] == target:
-            return mid
-        if array[mid] < target:
-            left = mid
-        else:
-            right = mid
-    return mid
-
-
-def splittingValue(nums1: List[int], nums2: List[int], splitSize: int) -> int:
-    right = max(nums1[-1], nums2[-1])
-    left = min(nums1[0], nums2[0])
-    prev = 0
-    mid = -1
-    while prev != mid:
-        prev = mid
-        mid = (left + right) // 2
-        atLeft = valuesToTheLeft(nums1, mid) + valuesToTheLeft(nums2, mid)
-        if atLeft == splitSize:
-            return mid
-        if atLeft < splitSize:
-            left = mid
-        else:
-            right = mid
-    return mid
-
-
 class Solution:
     def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
         n, m = len(nums1), len(nums2)
-        if n * m == 0:
-            if n == 0:
-                nums = nums2
+        if n > m:
+            n, m = m, n
+            nums1, nums2 = nums2, nums1
+        half = (n + m) // 2
+        left = 0
+        right = half
+        take = (left + right) // 2
+        prev = 0
+        while prev != take:
+            if nums1[min(take, n) - 1] > nums2[half - min(take, n)]:
+                left = take
+            elif nums2[half - min(take, n) - 1] > nums1[min(take, n)]:
+                right = take
             else:
-                nums = nums1
-            n = len(nums)
-            return (nums[n // 2] + nums[(n - 1) // 2]) / 2
-        fullSize = n + m
-        halfSize = (fullSize) // 2
-        a = splittingValue(nums1, nums2, halfSize)
-        if fullSize % 2:
-            return a
-        b = splittingValue(nums1, nums2, (fullSize - 1) // 2)
-        print(f"a:{a},b:{b}")
-        return (a + b) / 2
+                break
+            prev = take
+            take = (left + right) // 2
+        print(take)
+        return (nums1[min(take, n) - 1], nums2[half - min(take, n) - 1])
 
 
-nums1 = [2, 2, 4, 4]
-nums2 = [2, 2, 2, 4, 4]
+nums1 = [1, 2]
+nums2 = [3]
+# 2,2,2,3,4,4,4,4,5,6
 output = Solution().findMedianSortedArrays(nums1, nums2)
 print(output)
 print(sorted(nums1 + nums2))
